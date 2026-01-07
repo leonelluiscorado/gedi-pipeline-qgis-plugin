@@ -1,0 +1,437 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui version="4.0">
+ <class>GEDIPipelineDialogBase</class>
+ <widget class="QDialog" name="GEDIPipelineDialogBase">
+  <property name="geometry">
+   <rect>
+    <x>0</x>
+    <y>0</y>
+    <width>600</width>
+    <height>720</height>
+   </rect>
+  </property>
+  <property name="windowTitle">
+   <string>GEDI Data Downloader</string>
+  </property>
+  <layout class="QVBoxLayout" name="mainVerticalLayout">
+   <item>
+    <widget class="QTabWidget" name="tabWidget">
+     <property name="tabPosition">
+      <enum>QTabWidget::North</enum>
+     </property>
+     <property name="currentIndex">
+      <number>0</number>
+     </property>
+     <widget class="QWidget" name="tab_general">
+      <attribute name="title">
+       <string>General</string>
+      </attribute>
+      <layout class="QVBoxLayout" name="verticalLayoutGeneral">
+       <item>
+        <widget class="QGroupBox" name="outputGroup">
+         <property name="title">
+          <string>Output</string>
+         </property>
+         <layout class="QFormLayout" name="formLayoutOutput">
+          <item row="0" column="0">
+           <widget class="QLabel" name="label_output_dir">
+            <property name="text">
+             <string>Output folder:</string>
+            </property>
+           </widget>
+          </item>
+          <item row="0" column="1">
+           <layout class="QHBoxLayout" name="horizontalLayoutOutput">
+            <item>
+             <widget class="QLineEdit" name="output_dir_lineedit"/>
+            </item>
+            <item>
+             <widget class="QPushButton" name="browse_output_btn">
+              <property name="text">
+               <string>Browse…</string>
+              </property>
+             </widget>
+            </item>
+           </layout>
+          </item>
+         </layout>
+        </widget>
+       </item>
+       <item>
+        <widget class="QGroupBox" name="productGroup">
+         <property name="title">
+          <string>Product</string>
+         </property>
+         <layout class="QFormLayout" name="formLayoutProduct">
+          <item row="0" column="0">
+           <widget class="QLabel" name="label_product">
+            <property name="text">
+             <string>GEDI product:</string>
+            </property>
+           </widget>
+          </item>
+          <item row="0" column="1">
+           <widget class="QComboBox" name="product_combo">
+            <item>
+             <property name="text">
+              <string>GEDI02_A</string>
+             </property>
+            </item>
+            <item>
+             <property name="text">
+              <string>GEDI01_B</string>
+             </property>
+            </item>
+            <item>
+             <property name="text">
+              <string>GEDI02_B</string>
+             </property>
+            </item>
+            <item>
+             <property name="text">
+              <string>GEDI04_A</string>
+             </property>
+            </item>
+           </widget>
+          </item>
+          <item row="1" column="0">
+           <widget class="QLabel" name="label_version">
+            <property name="text">
+             <string>Version:</string>
+            </property>
+           </widget>
+          </item>
+          <item row="1" column="1">
+           <widget class="QComboBox" name="version_combo">
+            <item>
+             <property name="text">
+              <string>002</string>
+             </property>
+            </item>
+           </widget>
+          </item>
+         </layout>
+        </widget>
+       </item>
+       <item>
+        <widget class="QGroupBox" name="datesGroup">
+         <property name="title">
+          <string>Date range</string>
+         </property>
+         <layout class="QFormLayout" name="formLayoutDates">
+          <item row="0" column="0">
+           <widget class="QLabel" name="label_start_date">
+            <property name="text">
+             <string>Start date (yyyy.MM.dd):</string>
+            </property>
+           </widget>
+          </item>
+          <item row="0" column="1">
+           <widget class="QDateEdit" name="start_date_edit">
+            <property name="dateTime">
+             <datetime>
+              <hour>0</hour>
+              <minute>0</minute>
+              <second>0</second>
+              <year>2019</year>
+              <month>3</month>
+              <day>25</day>
+             </datetime>
+            </property>
+            <property name="displayFormat">
+             <string>yyyy.MM.dd</string>
+            </property>
+            <property name="calendarPopup">
+             <bool>true</bool>
+            </property>
+           </widget>
+          </item>
+          <item row="1" column="0">
+           <widget class="QLabel" name="label_end_date">
+            <property name="text">
+             <string>End date (yyyy.MM.dd):</string>
+            </property>
+           </widget>
+          </item>
+          <item row="1" column="1">
+           <widget class="QDateEdit" name="end_date_edit">
+            <property name="displayFormat">
+             <string>yyyy.MM.dd</string>
+            </property>
+            <property name="calendarPopup">
+             <bool>true</bool>
+            </property>
+            <property name="date">
+             <date>
+              <year>2026</year>
+              <month>1</month>
+              <day>1</day>
+             </date>
+            </property>
+           </widget>
+          </item>
+          <item row="2" column="1">
+           <widget class="QCheckBox" name="recurring_months_check">
+            <property name="text">
+             <string>Recurring months only</string>
+            </property>
+           </widget>
+          </item>
+         </layout>
+        </widget>
+       </item>
+       <item>
+        <widget class="QGroupBox" name="roiGroup">
+         <property name="title">
+          <string>Area of Interest (Polygon Layer)</string>
+         </property>
+         <layout class="QFormLayout" name="formLayoutROI">
+          <item row="0" column="0">
+           <widget class="QLabel" name="label_polygon_layer">
+            <property name="text">
+             <string>Polygon layer:</string>
+            </property>
+           </widget>
+          </item>
+          <item row="0" column="1">
+           <layout class="QHBoxLayout" name="horizontalLayoutPolygonPicker">
+            <item>
+             <widget class="QComboBox" name="polygon_layer_combo"/>
+            </item>
+            <item>
+             <widget class="QToolButton" name="polygon_options_btn">
+              <property name="maximumSize">
+               <size>
+                <width>32</width>
+                <height>16777215</height>
+               </size>
+              </property>
+              <property name="text">
+               <string>...</string>
+              </property>
+              <property name="popupMode">
+               <enum>QToolButton::InstantPopup</enum>
+              </property>
+             </widget>
+            </item>
+           </layout>
+          </item>
+          <item row="1" column="1">
+           <widget class="QCheckBox" name="selected_only_check">
+            <property name="text">
+             <string>Selected features only</string>
+            </property>
+           </widget>
+          </item>
+          <item row="2" column="0">
+           <widget class="QLabel" name="label_polygon_source">
+            <property name="text">
+             <string>Source:</string>
+            </property>
+           </widget>
+          </item>
+          <item row="2" column="1">
+           <widget class="QLineEdit" name="polygon_path_lineedit">
+            <property name="readOnly">
+             <bool>true</bool>
+            </property>
+           </widget>
+          </item>
+         </layout>
+        </widget>
+       </item>
+       <item>
+        <spacer name="verticalSpacerGeneral">
+         <property name="orientation">
+          <enum>Qt::Vertical</enum>
+         </property>
+         <property name="sizeHint" stdset="0">
+          <size>
+           <width>20</width>
+           <height>20</height>
+          </size>
+         </property>
+        </spacer>
+       </item>
+      </layout>
+     </widget>
+     <widget class="QWidget" name="tab_credentials">
+      <attribute name="title">
+       <string>EarthData</string>
+      </attribute>
+      <layout class="QVBoxLayout" name="verticalLayoutCredentials">
+       <item>
+        <widget class="QGroupBox" name="earthdataGroup">
+         <property name="title">
+          <string>EarthData credentials</string>
+         </property>
+         <layout class="QFormLayout" name="formLayoutCredentials">
+          <item row="0" column="0">
+           <widget class="QLabel" name="label_earthdata_user">
+            <property name="text">
+             <string>Username:</string>
+            </property>
+           </widget>
+          </item>
+          <item row="0" column="1">
+           <widget class="QLineEdit" name="earthdata_user_edit"/>
+          </item>
+          <item row="1" column="0">
+           <widget class="QLabel" name="label_earthdata_pass">
+            <property name="text">
+             <string>Password:</string>
+            </property>
+           </widget>
+          </item>
+          <item row="1" column="1">
+           <widget class="QLineEdit" name="earthdata_pass_edit">
+            <property name="echoMode">
+             <enum>QLineEdit::Password</enum>
+            </property>
+           </widget>
+          </item>
+          <item row="2" column="1">
+           <widget class="QCheckBox" name="keep_login_check">
+            <property name="text">
+             <string>Keep login (save netrc)</string>
+            </property>
+           </widget>
+          </item>
+         </layout>
+        </widget>
+       </item>
+       <item>
+        <spacer name="verticalSpacerCredentials">
+         <property name="orientation">
+          <enum>Qt::Vertical</enum>
+         </property>
+         <property name="sizeHint" stdset="0">
+          <size>
+           <width>20</width>
+           <height>40</height>
+          </size>
+         </property>
+        </spacer>
+       </item>
+      </layout>
+     </widget>
+     <widget class="QWidget" name="tab_optional">
+      <attribute name="title">
+       <string>Optional</string>
+      </attribute>
+      <layout class="QVBoxLayout" name="verticalLayoutOptional">
+       <item>
+        <widget class="QGroupBox" name="optionsGroup">
+         <property name="title">
+          <string>Optional parameters</string>
+         </property>
+         <layout class="QFormLayout" name="formLayoutOptions">
+          <item row="0" column="0">
+           <widget class="QLabel" name="label_beams">
+            <property name="text">
+             <string>Beams (comma-separated):</string>
+            </property>
+           </widget>
+          </item>
+          <item row="0" column="1">
+           <widget class="QLineEdit" name="beams_lineedit"/>
+          </item>
+          <item row="1" column="0">
+           <widget class="QLabel" name="label_sds">
+            <property name="text">
+             <string>SDS (comma-separated):</string>
+            </property>
+           </widget>
+          </item>
+          <item row="1" column="1">
+           <widget class="QLineEdit" name="sds_lineedit"/>
+          </item>
+          <item row="2" column="1">
+           <widget class="QCheckBox" name="keep_original_check">
+            <property name="text">
+             <string>Keep original HDF5 files</string>
+            </property>
+           </widget>
+          </item>
+         </layout>
+        </widget>
+       </item>
+       <item>
+        <spacer name="verticalSpacerOptional">
+         <property name="orientation">
+          <enum>Qt::Vertical</enum>
+         </property>
+         <property name="sizeHint" stdset="0">
+          <size>
+           <width>20</width>
+           <height>40</height>
+          </size>
+         </property>
+        </spacer>
+       </item>
+      </layout>
+     </widget>
+    </widget>
+   </item>
+   <item>
+    <widget class="QGroupBox" name="progressGroup">
+     <property name="title">
+      <string>Progress</string>
+     </property>
+     <layout class="QVBoxLayout" name="verticalLayoutProgress">
+      <item>
+       <widget class="QProgressBar" name="progress_bar">
+        <property name="value">
+         <number>0</number>
+        </property>
+        <property name="textVisible">
+         <bool>true</bool>
+        </property>
+       </widget>
+      </item>
+      <item>
+       <widget class="QTextEdit" name="log_text_edit">
+        <property name="readOnly">
+         <bool>true</bool>
+        </property>
+       </widget>
+      </item>
+     </layout>
+    </widget>
+   </item>
+   <item>
+    <layout class="QHBoxLayout" name="horizontalLayoutButtons">
+     <item>
+      <spacer name="horizontalSpacerButtons">
+       <property name="orientation">
+        <enum>Qt::Horizontal</enum>
+       </property>
+       <property name="sizeHint" stdset="0">
+        <size>
+         <width>40</width>
+         <height>20</height>
+        </size>
+       </property>
+      </spacer>
+     </item>
+     <item>
+      <widget class="QPushButton" name="run_pipeline">
+       <property name="text">
+        <string>Run GEDI Pipeline</string>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <widget class="QPushButton" name="close_button">
+       <property name="text">
+        <string>Close</string>
+       </property>
+      </widget>
+     </item>
+    </layout>
+   </item>
+  </layout>
+ </widget>
+ <resources/>
+ <connections/>
+</ui>

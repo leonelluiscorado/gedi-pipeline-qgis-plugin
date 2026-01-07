@@ -1,0 +1,5 @@
+<RCC>
+    <qresource prefix="/plugins/gedi_pipeline_plugin" >
+        <file>icon.png</file>
+    </qresource>
+</RCC>
