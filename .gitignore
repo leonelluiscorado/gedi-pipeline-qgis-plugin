@@ -1,0 +1,11 @@
+*.env
+*.ipynb_checkpoints
+*.h5*
+*.json
+*GranuleList*
+*.Rhistory*
+*.gpkg*
+*.shp*
+*__pycache__*
+*test*
+*dev*
