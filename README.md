@@ -19,10 +19,11 @@ and a simpler installation workflow for GEDI-Pipeline.
 - Python deps available to the QGIS Python: `h5py`, `pandas`, `geopandas`, `shapely`, `fiona`, `rtree`, `numpy`, `requests`.
 
 ### Windows (OSGeo4W/Standalone QGIS)
-- Recommended: use OSGeo4W Installer (Advanced) to add `python3-h5py`, `python3-pandas`, `python3-geopandas`, `python3-shapely`, `python3-rtree`, etc.
+- Recommended: use OSGeo4W Setup (Advanced) → on the "Select Packages" menu, search and add `python3-h5py`-
+
 - Or from the OSGeo4W Shell:
   ```cmd
-  python -m pip install --user --upgrade h5py pandas geopandas shapely fiona rtree numpy requests tqdm earthaccess
+  python -m pip install --user h5py
   ```
   If you see HDF5 mismatch errors with `h5py`, install the OSGeo4W package `python3-h5py` instead.
 
@@ -32,15 +33,8 @@ sudo apt install python3-h5py python3-pandas python3-geopandas python3-shapely p
 python3 -m pip install --user requests earthaccess  # if needed
 ```
 
-### macOS (QGIS bundle)
-Use the QGIS Python:
-```bash
-/Applications/QGIS.app/Contents/MacOS/bin/python3 -m pip install --user h5py pandas geopandas shapely fiona rtree numpy requests tqdm earthaccess
-```
-If `h5py` warns about HDF5 mismatch, reinstall QGIS or rebuild h5py with `--no-binary=h5py` against the bundled HDF5.
-
 ## Installation
-1. Download the plugin ZIP (the one with `metadata.txt` at the root).
+1. Download the plugin ZIP (https://github.com/leonelluiscorado/gedi-pipeline-qgis-plugin/releases/tag/v0.1.0). 
 2. In QGIS: Plugins → Manage and Install Plugins… → Install from ZIP… → select the ZIP.
 3. Restart QGIS.
 
