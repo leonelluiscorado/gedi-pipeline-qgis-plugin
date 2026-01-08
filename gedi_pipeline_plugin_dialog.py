@@ -265,6 +265,13 @@ class GEDIPipelineDialog(QtWidgets.QDialog, FORM_CLASS):
         if not params["polygon_layer_id"] and not params["polygon_source"]:
             QtWidgets.QMessageBox.warning(self, "Missing AOI", "Please select a polygon layer or load a polygon file.")
             return
+        if not self._has_credentials(params):
+            QtWidgets.QMessageBox.warning(
+                self,
+                "Missing credentials",
+                "Please enter your EarthData username and password (or ensure a .netrc/_netrc file exists).",
+            )
+            return
         if not self.check_dependencies():
             return
         if self._worker_thread and self._worker_thread.isRunning():
@@ -299,13 +306,23 @@ class GEDIPipelineDialog(QtWidgets.QDialog, FORM_CLASS):
             "keep_original": self.keep_original_check.isChecked(),
         }
     
+    def _has_credentials(self, params):
+        # Allow explicit credentials or existing netrc/_netrc files
+        if params["earthdata_user"] and params["earthdata_pass"]:
+            return True
+        home = Path.home()
+        for candidate in [home / ".netrc", home / "_netrc"]:
+            if candidate.exists() and candidate.stat().st_size > 0:
+                return True
+        return False
+    
     def check_dependencies(self):
         """Ensure required Python deps are available in the QGIS environment."""
         missing = []
         hdf5_mismatch = None
         # h5py special handling
         try:
-            import h5py  # noqa: F401
+            import h5py
 
             built = getattr(h5py.version, "hdf5_built_version", None)
             runtime = getattr(h5py.version, "hdf5_version", None)
@@ -317,7 +334,7 @@ class GEDIPipelineDialog(QtWidgets.QDialog, FORM_CLASS):
                 hdf5_mismatch = (built, runtime)
         except ImportError:
             missing.append("h5py")
-        for mod in ["pandas", "geopandas", "numpy", "shapely", "earthaccess", "requests", "tqdm"]:
+        for mod in ["pandas", "geopandas", "numpy", "shapely", "earthaccess", "requests"]:
             try:
                 __import__(mod)
             except ImportError:
@@ -340,19 +357,17 @@ class GEDIPipelineDialog(QtWidgets.QDialog, FORM_CLASS):
             msg_lines.append(
                 "Windows/OSGeo4W: run the OSGeo4W installer in Advanced mode and add package 'python3-h5py' "
                 "and other missing ones, or in OSGeo4W Shell run:\n"
-                f'  "{py_path}" -m pip install --user ' + " ".join(sorted(set(missing))) if missing else ""
+                f'  python -m pip install --user ' + " ".join(sorted(set(missing))) if missing else ""
             )
         elif os_name == "Darwin":
             msg_lines.append(
                 "macOS: use QGIS Python to install:\n"
-                f'  "{py_path}" -m pip install --user ' + " ".join(sorted(set(missing))) if missing else ""
+                f'  python -m pip install --user ' + " ".join(sorted(set(missing))) if missing else ""
             )
         else:
             msg_lines.append(
                 "Linux (Debian/Ubuntu):\n"
-                "  sudo apt install python3-h5py python3-pandas python3-geopandas python3-shapely\n"
-                "or with QGIS Python:\n"
-                f'  "{py_path}" -m pip install --user ' + " ".join(sorted(set(missing))) if missing else ""
+                "  sudo apt install python3-h5py python3-pandas python3-geopandas python3-shapely"
             )
 
         QtWidgets.QMessageBox.critical(self, "Missing dependencies", "\n\n".join([m for m in msg_lines if m]))
