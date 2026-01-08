@@ -12,8 +12,8 @@ email=leonel.corado@uevora.pt
 
 about=This plugin downloads, subsets and clips GEDI data to user-defined areas of interest and user-defined parameters.
 
-tracker=http://bugs
-repository=http://repo
+tracker=https://github.com/leonelluiscorado/gedi-pipeline-qgis-plugin/issues
+repository=https://github.com/leonelluiscorado/gedi-pipeline-qgis-plugin
 # End of mandatory metadata
 
 # Recommended items:
@@ -25,7 +25,7 @@ hasProcessingProvider=no
 # Tags are comma separated with spaces allowed
 tags=python
 
-homepage=http://homepage
+homepage=https://github.com/leonelluiscorado/gedi-pipeline-qgis-plugin
 category=Plugins
 icon=icon.png
 # experimental flag

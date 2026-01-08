@@ -107,11 +107,22 @@ class PipelineWorker(QtCore.QObject):
         pwd = self.params["earthdata_pass"]
         if not user or not pwd:
             return
-        netrc_path = Path.home() / ".netrc"
+        
         content = f"machine urs.earthdata.nasa.gov login {user} password {pwd}\n"
-        netrc_path.write_text(content)
-        netrc_path.chmod(0o600)
-        self.log.emit("[Auth] Wrote credentials to ~/.netrc for EarthData.")
+        # Write both Unix and Windows-friendly filenames to avoid prompts in earthaccess
+        netrc_files = [Path.home() / ".netrc"]
+        if os.name == "nt":
+            netrc_files.append(Path.home() / "_netrc")
+        for netrc_path in netrc_files:
+            try:
+                netrc_path.write_text(content)
+                try:
+                    netrc_path.chmod(0o600)
+                except Exception:
+                    pass
+                self.log.emit(f"[Auth] Wrote credentials to {netrc_path} for EarthData.")
+            except Exception as e:
+                self.log.emit(f"[Auth] Failed to write credentials to {netrc_path}: {e}")
 
     def _compute_roi(self):
         layer_id = self.params["polygon_layer_id"]

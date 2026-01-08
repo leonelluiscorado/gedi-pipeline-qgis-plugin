@@ -1,7 +1,6 @@
 import os
 import requests
 import getpass
-from tqdm import tqdm
 import earthaccess
 
 class SessionNASA(requests.Session):

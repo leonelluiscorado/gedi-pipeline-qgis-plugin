@@ -10,7 +10,8 @@ def get_date_from_gedi_fn(granule_name):
     Returns -
         date_sec (date_section) str in format YYYY/mm/dd
     """
-    filename = granule_name.split("/")[-1]
+    import os
+    filename = os.path.basename(granule_name.replace("\\", "/"))
     julian_date = filename.split("_")[2][0:7]
     date_sec = datetime.strptime(julian_date, "%Y%j").date()
     date_sec = date_sec.strftime("%Y/%m/%d")
