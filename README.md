@@ -19,18 +19,17 @@ and a simpler installation workflow for GEDI-Pipeline.
 - Python deps available to the QGIS Python: `h5py`, `pandas`, `geopandas`, `shapely`, `fiona`, `rtree`, `numpy`, `requests`.
 
 ### Windows (OSGeo4W/Standalone QGIS)
-- Recommended: use OSGeo4W Setup (Advanced) → on the "Select Packages" menu, search and add `python3-h5py`-
+- Recommended: use OSGeo4W Setup (Advanced) → on the "Select Packages" menu, search and add `python3-h5py`, `python3-pandas`, `python3-geopandas`, `python3-shapely`, `python3-requests`
 
 - Or from the OSGeo4W Shell:
   ```cmd
   python -m pip install --user h5py
   ```
-  If you see HDF5 mismatch errors with `h5py`, install the OSGeo4W package `python3-h5py` instead.
+  If you see HDF5 mismatch errors with `h5py`, uninstall inside the OSGeo4W shell with `python -m pip uninstall h5py` and install the OSGeo4W package `python3-h5py` instead.
 
 ### Linux (Debian/Ubuntu)
 ```bash
 sudo apt install python3-h5py python3-pandas python3-geopandas python3-shapely python3-rtree
-python3 -m pip install --user requests earthaccess  # if needed
 ```
 
 ## Installation
