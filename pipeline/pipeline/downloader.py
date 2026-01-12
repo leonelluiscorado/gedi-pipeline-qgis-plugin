@@ -1,57 +1,57 @@
 import os
 import requests
 import getpass
-import earthaccess
+import netrc
 
 class SessionNASA(requests.Session):
-	"""
-		DEPRECATED: We use EarthAccess API
-	:class: SessionNASA authorizes access to download files from NASA's Data Repository.
-	This implementation checks if a .env file exists with said credentials, if not, asks user for input.
+    """
+    Simple EarthData session using requests + .netrc/_netrc credentials.
+    """
 
-	Args:
-		username - Registered username for Data Repo
-		password - Registered password for Data Repo
-	"""
-	
-	AUTH_HOST = 'urs.earthdata.nasa.gov'
+    AUTH_HOST = "urs.earthdata.nasa.gov"
 
-	def __init__(self):
-		super().__init__()
+    def __init__(self, username=None, password=None):
+        super().__init__()
+        self.username, self.password = self._load_credentials(username, password)
+        self.auth = (self.username, self.password)
 
-		self.__precheck()
-		self.auth = (self.username, self.password)
+    def _load_credentials(self, username, password):
+        if username and password:
+            return username, password
 
-	def __precheck(self):
-		if os.path.exists(".env"):
-			load_dotenv()
-			self.username = os.environ.get("GEDIPIPELINE_USER")
-			self.password = os.environ.get("GEDIPIPELINE_PASS")
-			return
-		
-		# If credentials don't exist yet, ask user
-		print("[Downloader] Introduce your credentials to access the Data Repository")
-		self.username = input("Username : ")
-		self.password = getpass.getpass()
+        # Try .netrc / _netrc
+        netrc_paths = [os.path.expanduser("~/.netrc"), os.path.expanduser("~/_netrc")]
+        for path in netrc_paths:
+            if os.path.exists(path):
+                try:
+                    creds = netrc.netrc(path).authenticators(self.AUTH_HOST)
+                    if creds:
+                        return creds[0], creds[2]
+                except Exception:
+                    continue
 
- 
-	def rebuild_auth(self, prepared_request, response):
-		"""
-		See requests.Session.rebuild_auth docs:
-		"When being redirected we may want to strip authentication from the request to avoid leaking credentials.
-		This method intelligently removes and reapplies authentication where possible to avoid credential loss."
+        # Fallback to prompt (CLI use; in GUI we expect netrc to exist)
+        print("[Downloader] Introduce your credentials to access the Data Repository")
+        user = input("Username : ")
+        pwd = getpass.getpass()
+        return user, pwd
 
-		Checks if redirected or original URL hostname is the same as AUTH_HOST (NASA Data Repo),
-		and deletes authorization credentials when not, to avoid leaking credentials
-		"""
-		headers = prepared_request.headers 
-		url = prepared_request.url
-		if 'Authorization' in headers: 
-			original_parsed = requests.utils.urlparse(response.request.url) 
-			redirect_parsed = requests.utils.urlparse(url) 
-			if (original_parsed.hostname != redirect_parsed.hostname) and redirect_parsed.hostname != self.AUTH_HOST and original_parsed.hostname != self.AUTH_HOST: 
-				del headers['Authorization']
-		return
+    def rebuild_auth(self, prepared_request, response):
+        """
+        Strip auth on redirects to non-URS hosts to avoid leaking credentials.
+        """
+        headers = prepared_request.headers
+        url = prepared_request.url
+        if "Authorization" in headers:
+            original_parsed = requests.utils.urlparse(response.request.url)
+            redirect_parsed = requests.utils.urlparse(url)
+            if (
+                original_parsed.hostname != redirect_parsed.hostname
+                and redirect_parsed.hostname != self.AUTH_HOST
+                and original_parsed.hostname != self.AUTH_HOST
+            ):
+                del headers["Authorization"]
+        return
 
 class GEDIDownloader:
 	"""
@@ -69,12 +69,11 @@ class GEDIDownloader:
 	def __init__(self, persist_login=False, save_path=None):
 		self.save_path = save_path if save_path is not None else ""
 		print("Logging in EarthData...")
-		self.auth = earthaccess.login(persist=persist_login)
-		self.session = self.auth.get_session()
+		# earthaccess is unavailable for QGIS; rely on requests + netrc.
+		self.session = SessionNASA()
 	
-	def __download(self, content, save_path, length):
-		"""Download without noisy tqdm output (GUI-friendly)."""
-		total = int(length)
+	def __download(self, content, save_path):
+		"""Download"""
 		written = 0
 		with open(save_path, "wb") as file:
 			for chunk in content:
@@ -130,10 +129,13 @@ class GEDIDownloader:
 			return False
 
 		response_length = http_response.headers.get('content-length')
+		if response_length is None:
+			print("[Downloader] Missing content-length header; skipping download.")
+			return False
 
 		# If file not exists, download
 		if not self.__precheck_file(file_path, int(response_length)):
-			self.__download(http_response.iter_content(chunk_size=chunk_size), file_path, response_length)
+			self.__download(http_response.iter_content(chunk_size=chunk_size), file_path)
 
 		# Check file integrity / if it downloaded correctly
 		if not os.path.getsize(file_path) == int(response_length):
@@ -151,15 +153,14 @@ class GEDIDownloader:
 
 		# Start download for every granule
 		for g in files_url:
-            # Try Download
 			if not self.download_granule(g[0]):
 				retries = 3
 				print(f"[Downloader] Fail download for link {g}. Retrying...")
-				for r in retries:
-					print(f"Retry {r}")
-					if not self.download_granule(g[0]):
-						retries -= 1
-						continue
+				while retries > 0:
+					print(f"Retry {retries}")
+					if self.download_granule(g[0]):
+						break
+					retries -= 1
+				if retries == 0:
 					print(f"[Downloader] Fail download for link {g}. Skipping...")
-					continue
 		return files_url
